@@ -3,7 +3,7 @@
 	"name": "Imaginatory Cards",
 	"display_name": "Imaginatory",
 	"author": ["ZadikGooba"],
-	"description": "Adds childhood fantasy cards.",
+	"description": "Adds imaginatory content, with a focus on transforming playing cards",
 	"prefix": "imaginary",
 	"main_file": "imaginatoryMod.lua",
 	"priority": 0,
