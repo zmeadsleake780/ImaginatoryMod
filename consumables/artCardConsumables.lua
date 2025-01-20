@@ -106,7 +106,7 @@ local humanArtCard = {
 
     display_size = { w = 75, h = 83 },
 
-    config = { max_highlighted = 5, mod_conv = 'm_werewolf_tip', skipTransformAnimation = false },
+    config = { max_highlighted = 2, mod_conv = 'm_werewolf_tip', skipTransformAnimation = false },
 	loc_vars = function(self, info_queue, card)
         info_queue[#info_queue+1] = {
             set = "Other",

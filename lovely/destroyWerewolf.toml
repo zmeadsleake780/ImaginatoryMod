@@ -23,3 +23,15 @@ if SMODS.has_enhancement(scoring_hand[i], 'm_imaginary_werewolfCard') and not sc
 end
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = '''
+G.E_MANAGER:add_event(Event({func = function() G.play.cards[i]:juice_up(); return true end })) 
+'''
+position = "at"
+payload = '''
+G.E_MANAGER:add_event(Event({func = function() if G.play.cards[i] then G.play.cards[i]:juice_up(); end return true end })) 
+'''
+match_indent = true

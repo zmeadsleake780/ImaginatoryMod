@@ -159,10 +159,14 @@ function TransformCardInto(center_key, card, cardTable, transformTicks, ticksPer
 
 	delay(1)
 
+	local previousState = G.STATE
+	G.STATE = G.STATES.PLAY_TAROT
+	G.STATE_COMPLETE = false
+
 	local firstPlay = true
 	for i = 1, transformTicks do
 		G.E_MANAGER:add_event(Event({trigger = 'after', delay = 1 / ticksPerSecond, func = function()
-			local percent = (i/5)/transformTicks
+			local percent = ((i/5)/transformTicks)
 			play_sound("card1", percent)
 
 			for k, v in ipairs(cardsToTransform) do
@@ -172,7 +176,7 @@ function TransformCardInto(center_key, card, cardTable, transformTicks, ticksPer
  					v:flip()
  					v:set_ability(G.P_CENTERS[center_key])
 
- 					awaken.play(v, firstPlay)
+ 					awaken.play(v, firstPlay, k)
 
 					if firstPlay then firstPlay = false end
  				end
@@ -233,6 +237,10 @@ function TransformCardInto(center_key, card, cardTable, transformTicks, ticksPer
 	-- end
 	G.E_MANAGER:add_event(Event({ trigger = "after", delay = 0.4, func = function()
 		G.hand:unhighlight_all()
+
+		sendTraceMessage("reset state")
+		G.STATE = previousState
+		G.STATE_COMPLETE = false
 		return true
 	end }))
 	delay (0.8)

@@ -104,7 +104,7 @@ local dragonCard = {
                 if card.ability.hideEnhancements then
                     for k, v in ipairs(G.play.cards) do
                         if v.ability.name == "m_imaginary_burntCard" then
-                            v:set_sprites(G.P_CENTERS[v.config.previousName])
+                            v:set_sprites(G.P_CENTERS[v.config.previousName], nil)
                         end
                     end
                 end
@@ -220,20 +220,25 @@ local humanCard = {
     update = function(self, card, dt)   
         if G.STATE == G.STATES.SELECTING_HAND and G.GAME.blind and G.GAME.blind.boss and not card.ability.transforming then
             local humans = {}
+            local werewolfMult = {}
 
             for k, v in ipairs(G.hand.cards) do
                 if v.ability.name == "m_imaginary_humanCard" then
                     v.ability.transforming = true
 
                     humans[#humans+1] = v
+                    werewolfMult[#werewolfMult+1] = v.ability.werewolfMult
                 end
             end
 
             if #humans > 0 then
-                TransformCardInto("m_imaginary_werewolfCard", card, humans, 50, 10, { play = function(card, playSound) 
+
+                TransformCardInto("m_imaginary_werewolfCard", card, humans, 25, 6, { play = function(card, playSound, index)
                     if playSound then
-                        play_sound("imaginary_werewolfTransformation")
+                        play_sound("imaginary_werewolfTransformation", 1, 0.5)
                     end
+
+                    card.ability.werewolfMult = werewolfMult[index]
 
                     local eval = function() return card.area end
                     juice_card_until(card, eval, true)
@@ -318,22 +323,27 @@ local werewolfCard = {
                 card.ability.hasConsumed = false
             end
 
-            if G.GAME.blind and not G.GAME.blind.boss and not card.ability.transforming and #G.hand.cards >= G.hand.config.card_limit then
+            if G.GAME.blind and not G.GAME.blind.boss and not card.ability.transforming and (#G.hand.cards >= G.hand.config.card_limit or #G.playing_cards <= 0) then
                 local werewolves = {}
+                local werewolfMult = {}
+
                 for k, v in ipairs(G.hand.cards) do
                     if v.ability.name == "m_imaginary_werewolfCard" then
                         v.ability.transforming = true
     
                         werewolves[#werewolves+1] = v
+                        werewolfMult[#werewolfMult+1] = v.ability.werewolfMult
                     end
                 end
     
                 if #werewolves > 0 then
-                    TransformCardInto("m_imaginary_humanCard", card, werewolves, 10, 2, { play = function(card, playSound) 
+                    TransformCardInto("m_imaginary_humanCard", card, werewolves, 10, 2, { play = function(card, playSound, index) 
                         if playSound then
                             --play_sound("imaginary_werewolfTransformation")
                         end
     
+                        card.ability.werewolfMult = werewolfMult[index]
+
                         local eval = function() return card.area end
                         juice_card_until(card, eval, true)
                     end })
@@ -344,17 +354,6 @@ local werewolfCard = {
 
     calculate = function(self, card, context, effect)
         if context.before and context.cardarea == G.play then 
-            -- for k, v in ipairs(context.full_hand) do
-            --     if v:is_suit("Hearts", true) then   
-            --         card.config.cardsToDestroy[#card.config.cardsToDestroy+1] = v
-            --         card.ability.consumed = card.ability.consumed + 1
-
-            --         sendTraceMessage(#card.config.cardsToDestroy)
-
-            --         v:start_dissolve({G.C.RED, G.C.BLACK}, false)
-            --     end
-            -- end
-
             card.ability.werewolfMult = card.ability.werewolfMult + (card.ability.consumed * card.ability.multScale)
 
             return { colour = G.C.RED, message = "Ate "..card.ability.consumed..'!' }
