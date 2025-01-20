@@ -1,0 +1,17 @@
+{
+	"id": "imaginatory_mod",
+	"name": "Imaginatory Cards",
+	"display_name": "Imaginatory",
+	"author": ["ZadikGooba"],
+	"description": "Adds childhood fantasy cards.",
+	"prefix": "imaginary",
+	"main_file": "imaginatoryMod.lua",
+	"priority": 0,
+	"badge_colour": "#ffc7ef",
+	"badge_text_colour": "#fffc96",
+	"version": "0.1",
+	"dependencies": [
+			"Steamodded (>=1.0.0~ALPHA-1217c)",
+      "Lovely (>=0.6)"
+	]
+}
