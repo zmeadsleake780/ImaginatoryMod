@@ -99,7 +99,7 @@ local dragonArtCard = {
 }
 
 local humanArtCard = {
-    name = "dragon",
+    name = "human",
     key = "human_art_card",
 
     set = "ArtCard",
