@@ -160,8 +160,11 @@ function TransformCardInto(center_key, card, cardTable, transformTicks, ticksPer
 	delay(1)
 
 	local previousState = G.STATE
-	G.STATE = G.STATES.PLAY_TAROT
-	G.STATE_COMPLETE = false
+	if previousState < G.STATES.TAROT_PACK then 
+		G.STATE = G.STATES.PLAY_TAROT
+		G.STATE_COMPLETE = false
+		G.TAROT_INTERRUPT_PULSE = true
+	end
 
 	local firstPlay = true
 	for i = 1, transformTicks do
@@ -193,54 +196,14 @@ function TransformCardInto(center_key, card, cardTable, transformTicks, ticksPer
 		return true
 	end, }))
 
-	-- for j = 1, #cardsToTransform do
-	-- 	local highlighted = cardsToTransform[j]
-
-	-- 	if highlighted then
-	-- 		highlighted:flip()
-			
-	-- 		local area = highlighted.area
-	-- 		if highlighted.area then highlighted.area:remove_card(highlighted) end
-
-	-- 		if (G.STATE >= G.STATES.TAROT_PACK) then
-	-- 			highlighted.T.x = G.ROOM.T.x + G.ROOM.T.w/2 - highlighted.T.w/2 - 0.75
-	-- 			highlighted.T.y = G.ROOM.T.y + G.ROOM.T.h/2 - highlighted.T.h/2 + 3.15
-	-- 		else
-	-- 			highlighted.T.x = G.ROOM.T.x + G.ROOM.T.w/2 - highlighted.T.w/2 - 0.75
-	-- 			highlighted.T.y = G.ROOM.T.y + G.ROOM.T.h/2 - highlighted.T.h/2 - 0.5
-	-- 		end
-
-	-- 		for i = 1, transformTicks do
-	-- 			G.E_MANAGER:add_event(Event({trigger = 'after', delay = 1 / ticksPerSecond, func = function()
-	-- 				local percent = (i/5)/transformTicks
-	-- 				play_sound("card1", percent)
-	-- 				highlighted:juice_up(i / transformTicks, i / transformTicks)
-					
-	-- 				if i == transformTicks then
-	-- 					highlighted:flip()
-	-- 					highlighted:set_ability(G.P_CENTERS[center_key])
-						
-	-- 					awaken.play(highlighted)
-	-- 				end
-
-	-- 				return true
-	-- 			end,
-	-- 			}))
-	-- 		end
-	-- 		G.E_MANAGER:add_event(Event({trigger = 'after', delay = 3, func = function()
-	-- 			area:emplace(highlighted, nil, true)
-	-- 			return true
-	-- 		end, }))
-	-- 	else
-	-- 		break
-	-- 	end
-	-- end
 	G.E_MANAGER:add_event(Event({ trigger = "after", delay = 0.4, func = function()
 		G.hand:unhighlight_all()
 
-		sendTraceMessage("reset state")
-		G.STATE = previousState
-		G.STATE_COMPLETE = false
+		if previousState < G.STATES.TAROT_PACK then 
+			G.STATE = previousState
+			G.STATE_COMPLETE = false
+			G.TAROT_INTERRUPT_PULSE = nil
+		end
 		return true
 	end }))
 	delay (0.8)

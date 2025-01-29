@@ -7,18 +7,20 @@ priority = 99
 [patches.pattern]
 target = "functions/state_events.lua"
 pattern = '''
--- TARGET: card destroyed when played
+-- TARGET: effects when cards are removed
 '''
 position = "after"
 payload = '''
-if SMODS.has_enhancement(scoring_hand[i], 'm_imaginary_werewolfCard') and not scoring_hand[i].debuff and scoring_hand[i].config.cardsToDestroy and #scoring_hand[i].config.cardsToDestroy > 0 then
-    for j=1, #scoring_hand[i].config.cardsToDestroy do
-        if SMODS.shatters(scoring_hand[i].config.cardsToDestroy[j]) then
-            scoring_hand[i].config.cardsToDestroy[j].shattered = true
-        else 
-            scoring_hand[i].config.cardsToDestroy[j].destroyed = true
-        end 
-        cards_destroyed[#cards_destroyed+1] = scoring_hand[i].config.cardsToDestroy[j]
+for i = 1, #scoring_hand do
+    if SMODS.has_enhancement(scoring_hand[i], 'm_imaginary_werewolfCard') and not scoring_hand[i].debuff and scoring_hand[i].config.cardsToDestroy and #scoring_hand[i].config.cardsToDestroy > 0 then
+        for j=1, #scoring_hand[i].config.cardsToDestroy do
+            if SMODS.shatters(scoring_hand[i].config.cardsToDestroy[j]) then
+                scoring_hand[i].config.cardsToDestroy[j].shattered = true
+            else 
+                scoring_hand[i].config.cardsToDestroy[j].destroyed = true
+            end 
+            cards_destroyed[#cards_destroyed+1] = scoring_hand[i].config.cardsToDestroy[j]
+        end
     end
 end
 '''

@@ -105,6 +105,11 @@ local dragonCard = {
                     for k, v in ipairs(G.play.cards) do
                         if v.ability.name == "m_imaginary_burntCard" then
                             v:set_sprites(G.P_CENTERS[v.config.previousName], nil)
+
+                            if (G.P_CENTERS[v.config.previousName].config.replace_base_card or v.config.previousName == "m_stone")
+                             and v.children.front then v.children.front.VT.w = 0 end
+                            -- add patch that stops front from rendering
+                            v.dont_render_front = true
                         end
                     end
                 end

@@ -48,10 +48,10 @@ return {
         		}
 			},
 			c_imaginary_human_art_card = {
-				name = "Human?",
+				name = "Moon Rock",
 				text = {
-					"Select {C:attention}#1#{} card to",
-        		    "become a {C:attention}Human{}"
+					"Select {C:attention}#1#{} cards to",
+        		    "become a {C:attention}Human{C:inactive}...?{}"
 				}
 			}
 		},
