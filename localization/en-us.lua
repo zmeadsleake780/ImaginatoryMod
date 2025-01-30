@@ -25,7 +25,8 @@ return {
 					"Gives {C:chips}+#1#{} Chips and",
 					"{C:mult}+#2#{} Mult when scored.",
 					"{C:attention}Transforms{} into a {C:clubs}Werewolf{}",
-					"when drawn during a {C:attention}Boss Blind{}"
+					"when drawn during a {C:attention}Boss Blind{}",
+					"{C:inactive}(Currently {}{C:mult}+#3# {}{C:inactive}Mult as Werewolf){}"
 				}
 			},
 			m_imaginary_werewolfCard = {
@@ -54,6 +55,25 @@ return {
         		    "become a {C:attention}Human{C:inactive}...?{}"
 				}
 			}
+		},
+		Joker = {
+			j_imaginary_paradise = {
+				name = "Paradise",
+				text = {
+					"Apply {C:hearts}P{C:mult}o{C:diamonds}l{C:attention}y{C:money}c{C:green}h{C:planet}r{C:chips}o{C:spades}m{C:tarot}e{} to a random card",
+					"held in hand if played hand contains",
+					"at least one of every {C:attention}suit{}."
+				}
+			},
+			j_imaginary_partyLuck = {
+				name = "Party Luck",
+				text = {
+					"{C:attention}Lucky{} cards always {C:green}trigger{}",
+					"if you have at least {C:attention}#1#{}",
+					"{C:attention}Lucky{} cards in your full deck",
+					"{C:inactive}(Currently {C:attention}#2#{C:inactive})",
+				}
+			},
 		},
 		Other = {
 			m_dragon_tip = {

@@ -19,7 +19,14 @@ local werewolfTransformation = {
     path = "werewolfTransform.wav"
 }
 
+local werewolfBite = {
+    vol = 1,
+    pitch = 1,
+    key = "werewolfBite",
+    path = "werewolfBite.ogg"
+}
+
 return {
     name = "Sounds 1",
-    list = { dragonScreech, dragonFlame, werewolfTransformation }
+    list = { dragonScreech, dragonFlame, werewolfTransformation, werewolfBite }
 }

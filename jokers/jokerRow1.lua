@@ -1,13 +1,6 @@
 local paradise = { 
 	key = "paradise",
 
-	loc_txt = {
-		name = "Paradise",
-		text = {
-			"Apply {C:hearts}P{C:mult}o{C:diamonds}l{C:attention}y{C:money}c{C:green}h{C:planet}r{C:chips}o{C:spades}m{C:tarot}e{} to a random card held in hand",
-			"if played hand contains at least one of every {C:attention}suit{}."
-		}
-	},
 	config = { },
 	loc_vars = function(self, info_queue, card)
 		return { vars = { } }
@@ -92,16 +85,6 @@ local paradise = {
 
 local partyLuck = {
 	key = "partyLuck",
-
-	loc_txt = {
-		name = "Party Luck",
-		text = {
-			"{C:attention}Lucky{} cards always {C:green}trigger{}",
-			"if you have at least {C:attention}#1#{}",
-			"{C:attention}Lucky{} cards in your full deck",
-			"{C:inactive}(Currently {C:attention}#2#{C:inactive})",
-		}
-	},
 
 	config = { activeCount = 21 },
 	loc_vars = function(self, info_queue, card)

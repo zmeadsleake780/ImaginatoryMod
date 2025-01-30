@@ -106,7 +106,7 @@ local dragonCard = {
                         if v.ability.name == "m_imaginary_burntCard" then
                             v:set_sprites(G.P_CENTERS[v.config.previousName], nil)
 
-                            if (G.P_CENTERS[v.config.previousName].config.replace_base_card or v.config.previousName == "m_stone")
+                            if (G.P_CENTERS[v.config.previousName].replace_base_card or v.config.previousName == "m_stone")
                              and v.children.front then v.children.front.VT.w = 0 end
                             -- add patch that stops front from rendering
                             v.dont_render_front = true
@@ -203,7 +203,7 @@ local humanCard = {
             }
         }
 
-        return { vars = { card.ability.chips, card.ability.humanMult } }
+        return { vars = { card.ability.chips, card.ability.humanMult, card.ability.werewolfMult } }
     end,
 
     discovered = true,
@@ -298,7 +298,7 @@ local werewolfCard = {
             local cardInHand = false
 
             for k, v in ipairs(G.play.cards) do
-                if v.ability.name == "m_imaginary_dragonCard" and v ~= card then break end
+                if v.ability.name == "m_imaginary_dragonCard" and v ~= card then break end -- dragon has priority
                 if v == card then
                     cardInHand = true
                     break
@@ -307,17 +307,45 @@ local werewolfCard = {
 
             if cardInHand then
                 if not card.ability.hasConsumed then
-                    card.config.cardsToDestroy = {}
-                    for k, v in ipairs(G.play.cards) do
-                        if v:is_suit("Hearts", true) then   
-                            card.config.cardsToDestroy[#card.config.cardsToDestroy+1] = v
-                            card.ability.consumed = card.ability.consumed + 1
-
-                            v:start_dissolve({G.C.RED, G.C.BLACK}, false)
-                        end
-                    end
-
                     card.ability.hasConsumed = true
+
+                    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.2, func = function()
+                        card.config.cardsToDestroy = {}
+                        for k, v in ipairs(G.play.cards) do
+                            if v:is_suit("Hearts", true) then   
+                                card.config.cardsToDestroy[#card.config.cardsToDestroy+1] = v
+                                card.ability.consumed = card.ability.consumed + 1
+                            
+                                v:start_dissolve({G.C.RED, G.C.BLACK}, false)
+                            
+                                local bloodParticles = Particles(1, 1, 0, 0, {
+                                    timer = 0.015,
+                                    scale = 0.3,
+                                    initialize = true,
+                                    lifespan = 1,
+                                    speed = 4,
+                                    padding = -1,
+                                    attach = v,
+                                    colours = {G.C.WHITE, lighten(G.C.RED, 0.4), lighten(G.C.RED, 0.2), lighten(G.C.RED, 0.1)},
+                                    fill = true
+                                })
+                                bloodParticles.fade_alpha = 0
+                                bloodParticles:fade(0.3, 1)
+                            
+                            end
+                        end
+                    
+                        if #card.config.cardsToDestroy > 0 then
+                            for k, v in ipairs (G.play.cards) do
+                                if v.ability.name == "m_imaginary_werewolfCard" then 
+                                    if v ~= card then break end
+                                
+                                    play_sound("imaginary_werewolfBite") -- play sound only for the first werewolf in played hand
+                                end 
+                            end
+                        end
+                    return true
+	                end, }))
                 end
             end
         end
@@ -328,7 +356,7 @@ local werewolfCard = {
                 card.ability.hasConsumed = false
             end
 
-            if G.GAME.blind and not G.GAME.blind.boss and not card.ability.transforming and (#G.hand.cards >= G.hand.config.card_limit or #G.playing_cards <= 0) then
+            if G.GAME.blind and not G.GAME.blind.boss and not card.ability.transforming and (#G.hand.cards >= G.hand.config.card_limit or #G.deck.cards <= 0) then
                 local werewolves = {}
                 local werewolfMult = {}
 
@@ -342,16 +370,19 @@ local werewolfCard = {
                 end
     
                 if #werewolves > 0 then
-                    TransformCardInto("m_imaginary_humanCard", card, werewolves, 10, 2, { play = function(card, playSound, index) 
-                        if playSound then
-                            --play_sound("imaginary_werewolfTransformation")
-                        end
-    
-                        card.ability.werewolfMult = werewolfMult[index]
+                    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.2, func = function()
+                        TransformCardInto("m_imaginary_humanCard", card, werewolves, 10, 2, { play = function(card, playSound, index) 
+                            if playSound then
+                                --play_sound("imaginary_werewolfTransformation")
+                            end
+                        
+                            card.ability.werewolfMult = werewolfMult[index]
 
-                        local eval = function() return card.area end
-                        juice_card_until(card, eval, true)
-                    end })
+                            local eval = function() return card.area end
+                            juice_card_until(card, eval, true)
+                        end })
+                        return true
+	                end, }))
                 end
             end
         end
